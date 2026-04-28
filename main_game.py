@@ -39,11 +39,17 @@ class Fruit:
 class Snakie:
     def __init__(self):
         self.body = [Vector2(6,9), Vector2(5,9), Vector2(4,9)]
+        self.direction = Vector2(1,0)
 
     def draw(self):
         for segment in self.body:
             segmentRect = (segment.x * TileSize, segment.y *TileSize, TileSize, TileSize)
             pygame.draw.rect(screen, BLACK, segmentRect, 0,7)
+
+
+    def update(self):
+        self.body = self.body[:-1]
+        self.body.insert(0,self.body[0] + self.direction)
 
 
 
@@ -57,13 +63,23 @@ snakie = Snakie()
 fruitSurface = pygame.image.load("test_fuit.jpg")
 
 
+
+SNAKE_UPDATE = pygame.USEREVENT
+pygame.time.set_timer(SNAKE_UPDATE, 200)
+
+
 #The game loop
 running = True
 while running:
     for event in pygame.event.get():
+        if event.type == SNAKE_UPDATE:
+            snakie.update()
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
+
+
+    #snakie.update()
 
 
     #Frame rate and background

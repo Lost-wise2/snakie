@@ -11,10 +11,11 @@ clock = pygame.time.Clock()
 BLACK = (0,0,0)
 
 TileSize = 25
-NumberTiles = 30
+TilesX = 30
+TilesY = 25
 
-SCREEN_WIDTH = TileSize*NumberTiles
-SCREEN_HEIGHT = TileSize*TileSize
+SCREEN_WIDTH = TileSize*TilesX
+SCREEN_HEIGHT = TileSize*TilesY
 
 
 
@@ -29,8 +30,8 @@ class Fruit:
         screen.blit(fruitSurface, fruitRect)
 
     def generRandomPos(self):
-        x = random.randint(0, NumberTiles-1)
-        y = random.randint(0, NumberTiles-1)
+        x = random.randint(0, TilesX-1)
+        y = random.randint(0, TilesY-1)
         position = Vector2(x,y)
         return position
 
@@ -49,7 +50,9 @@ class Snakie:
 
     def update(self):
         self.body = self.body[:-1]
-        self.body.insert(0,self.body[0] + self.direction)
+        self.body.insert(0,
+                         Vector2( (self.body[0].x + self.direction.x) % TilesX , (self.body[0].y + self.direction.y) % TilesY)
+                         )
 
 
 

@@ -19,8 +19,8 @@ SCREEN_HEIGHT = TileSize*TileSize
 
 
 class Fruit:
-    def __init__(self):
-        self.position = self.generRandomPos()
+    def __init__(self, snakie_body):
+        self.position = self.generRandomPos(snakie_body)
 
 
     def draw(self):
@@ -28,10 +28,20 @@ class Fruit:
         #pygame.draw.rect(screen, BLACK, fruitRect)
         screen.blit(fruitSurface, fruitRect)
 
-    def generRandomPos(self):
+    
+    def generRandomCell(self):
         x = random.randint(0, NumberTiles-1)
-        y = random.randint(0, NumberTiles-1)
-        position = Vector2(x,y)
+        y = random.randint(0, TileSize-1)
+        return Vector2(x,y)
+    
+    def generRandomPos(self, snakie_body):
+        
+        position = self.generRandomCell()
+
+        while position in snakie_body:
+            position = self.generRandomCell()
+            
+
         return position
 
 
@@ -40,6 +50,7 @@ class Snakie:
     def __init__(self):
         self.body = [Vector2(6,9), Vector2(5,9), Vector2(4,9)]
         self.direction = Vector2(1,0)
+        self.add_body = False
 
     def draw(self):
         for segment in self.body:
@@ -48,8 +59,18 @@ class Snakie:
 
 
     def update(self):
-        self.body = self.body[:-1]
         self.body.insert(0,self.body[0] + self.direction)
+        if self.add_body == True:
+            
+            self.add_body = False
+        else:
+            self.body = self.body[:-1]
+
+
+    def reset(self):
+        self.body = [Vector2(6,9), Vector2(5,9), Vector2(4,9)]
+        self.direction = Vector2(1,0)
+            
 
 
 
@@ -57,7 +78,7 @@ class Snakie:
 class Game:
     def __init__(self):
         self.snakie = Snakie()
-        self.fruit = Fruit()
+        self.fruit = Fruit(self.snakie.body)
 
     def draw(self):
         self.fruit.draw()
@@ -65,6 +86,27 @@ class Game:
 
     def update(self):
         self.snakie.update()
+        self.check_collision()
+        self.check_deadEND()
+
+
+    def check_collision(self):
+        if self.snakie.body[0] == self.fruit.position:
+            #print("yummy in my tummy")
+            self.fruit.position = self.fruit.generRandomPos(self.snakie.body)
+            self.snakie.add_body = True
+
+    def check_deadEND(self):
+        if self.snakie.body[0].x == NumberTiles or self.snakie.body[0].x == -1:
+            self.game_over()
+        if self.snakie.body[0].y == TileSize or self.snakie.body[0].y == -1:
+            self.game_over()
+
+    
+    def game_over(self):
+        print("oopsies")
+        self.snakie.reset()
+        self.fruit.position = self.fruit.generRandomPos(self.snakie.body)
 
 
 
@@ -84,7 +126,7 @@ fruitSurface = pygame.image.load("test_fuit.jpg")
 
 
 SNAKE_UPDATE = pygame.USEREVENT
-pygame.time.set_timer(SNAKE_UPDATE, 200)
+pygame.time.set_timer(SNAKE_UPDATE, 150)
 
 
 #The game loop

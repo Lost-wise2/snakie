@@ -54,12 +54,31 @@ class Snakie:
 
 
 
+class Game:
+    def __init__(self):
+        self.snakie = Snakie()
+        self.fruit = Fruit()
+
+    def draw(self):
+        self.fruit.draw()
+        self.snakie.draw()
+
+    def update(self):
+        self.snakie.update()
+
+
+
+
+
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Snakie")
 
 
-fruit = Fruit()
-snakie = Snakie()
+#fruit = Fruit()
+#snakie = Snakie()
+
+game = Game()
+
 fruitSurface = pygame.image.load("test_fuit.jpg")
 
 
@@ -73,7 +92,7 @@ running = True
 while running:
     for event in pygame.event.get():
         if event.type == SNAKE_UPDATE:
-            snakie.update()
+            game.update()
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
@@ -81,17 +100,17 @@ while running:
 
 
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP and snakie.direction != Vector2(0,1):
-                snakie.direction = Vector2(0,-1)
+            if event.key == pygame.K_UP and game.snakie.direction != Vector2(0,1):
+                game.snakie.direction = Vector2(0,-1)
 
-            if event.key == pygame.K_DOWN and snakie.direction != Vector2(0,-1):
-                snakie.direction = Vector2(0,1)
+            if event.key == pygame.K_DOWN and game.snakie.direction != Vector2(0,-1):
+                game.snakie.direction = Vector2(0,1)
 
-            if event.key == pygame.K_LEFT and snakie.direction != Vector2(1,0):
-                snakie.direction = Vector2(-1,0)
+            if event.key == pygame.K_LEFT and game.snakie.direction != Vector2(1,0):
+                game.snakie.direction = Vector2(-1,0)
 
-            if event.key == pygame.K_RIGHT and snakie.direction != Vector2(-1,0):
-                snakie.direction = Vector2(1,0)
+            if event.key == pygame.K_RIGHT and game.snakie.direction != Vector2(-1,0):
+                game.snakie.direction = Vector2(1,0)
 
 
     #snakie.update()
@@ -100,8 +119,9 @@ while running:
     #Frame rate and background
     clock.tick(60)
     screen.fill((255,255,255))
-    fruit.draw()
-    snakie.draw()
+    #fruit.draw()
+    #snakie.draw()
+    game.draw()
 
 
 

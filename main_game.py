@@ -79,15 +79,18 @@ class Game:
     def __init__(self):
         self.snakie = Snakie()
         self.fruit = Fruit(self.snakie.body)
+        self.state = "RUNNING"
 
     def draw(self):
         self.fruit.draw()
         self.snakie.draw()
 
     def update(self):
-        self.snakie.update()
-        self.check_collision()
-        self.check_deadEND()
+        if self.state == "RUNNING":
+            self.snakie.update()
+            self.check_collision()
+            self.check_deadEND()
+            self.check_eatSELF()
 
 
     def check_collision(self):
@@ -101,12 +104,18 @@ class Game:
             self.game_over()
         if self.snakie.body[0].y == TileSize or self.snakie.body[0].y == -1:
             self.game_over()
+    
+    def check_eatSELF(self):
+        headless_snake = self.snakie.body[1:]
+        if self.snakie.body[0] in headless_snake:
+            self.game_over()
 
     
     def game_over(self):
         print("oopsies")
         self.snakie.reset()
         self.fruit.position = self.fruit.generRandomPos(self.snakie.body)
+        self.state = "STOPPED"
 
 
 
@@ -142,6 +151,8 @@ while running:
 
 
         if event.type == pygame.KEYDOWN:
+            if game.state == "STOPPED":
+                game.state = "RUNNING"
             if event.key == pygame.K_UP and game.snakie.direction != Vector2(0,1):
                 game.snakie.direction = Vector2(0,-1)
 

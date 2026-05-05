@@ -17,6 +17,9 @@ SCREEN_WIDTH = TileSize*NumberTiles
 SCREEN_HEIGHT = TileSize*TileSize
 
 
+OFFSET = 75
+
+
 
 class Fruit:
     def __init__(self, snakie_body):
@@ -24,7 +27,7 @@ class Fruit:
 
 
     def draw(self):
-        fruitRect = pygame.Rect(self.position.x * TileSize, self.position.y * TileSize, TileSize, TileSize)
+        fruitRect = pygame.Rect(OFFSET + self.position.x * TileSize, OFFSET + self.position.y * TileSize, TileSize, TileSize)
         #pygame.draw.rect(screen, BLACK, fruitRect)
         screen.blit(fruitSurface, fruitRect)
 
@@ -54,7 +57,7 @@ class Snakie:
 
     def draw(self):
         for segment in self.body:
-            segmentRect = (segment.x * TileSize, segment.y *TileSize, TileSize, TileSize)
+            segmentRect = (OFFSET + segment.x * TileSize, OFFSET + segment.y *TileSize, TileSize, TileSize)
             pygame.draw.rect(screen, BLACK, segmentRect, 0,7)
 
 
@@ -121,7 +124,7 @@ class Game:
 
 
 
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+screen = pygame.display.set_mode((2*OFFSET + SCREEN_WIDTH, 2*OFFSET + SCREEN_HEIGHT))
 pygame.display.set_caption("Snakie")
 
 
@@ -172,6 +175,7 @@ while running:
     #Frame rate and background
     clock.tick(60)
     screen.fill((255,255,255))
+    pygame.draw.rect(screen, (148, 201, 40), (OFFSET-5,OFFSET-5, SCREEN_WIDTH + 10, SCREEN_HEIGHT + 10), 5)
     #fruit.draw()
     #snakie.draw()
     game.draw()

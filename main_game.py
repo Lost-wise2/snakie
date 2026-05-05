@@ -5,6 +5,8 @@ import random
 
 pygame.init()
 
+titleFont = pygame.font.Font(None, 60)
+
 #game definitions
 clock = pygame.time.Clock()
 
@@ -178,7 +180,10 @@ while running:
     pygame.draw.rect(screen, (148, 201, 40), (OFFSET-5,OFFSET-5, SCREEN_WIDTH + 10, SCREEN_HEIGHT + 10), 5)
     #fruit.draw()
     #snakie.draw()
+
     game.draw()
+    title_surface = titleFont.render("Snakie game", True, (148, 201, 40))
+    screen.blit(title_surface, (OFFSET + 5, 20))
 
 
 

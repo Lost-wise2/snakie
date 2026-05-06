@@ -3,6 +3,27 @@ from pygame.math import Vector2
 import sys
 import random
 
+import json
+
+
+def renewSCores():
+
+    highScores = []
+
+    with open("highScores.json", "r", encoding="utf-8") as HIGHscores:
+        the_HIGHscores = json.load(HIGHscores)
+
+        print(the_HIGHscores)
+        print(the_HIGHscores["mik_1"])
+        
+        highScores.append(the_HIGHscores)
+
+        print(highScores)
+
+
+renewSCores()
+
+
 pygame.init()
 
 titleFont = pygame.font.Font(None, 60)
@@ -124,6 +145,7 @@ class Game:
         self.snakie.reset()
         self.fruit.position = self.fruit.generRandomPos(self.snakie.body)
         self.state = "STOPPED"
+
         self.score = 0
 
 

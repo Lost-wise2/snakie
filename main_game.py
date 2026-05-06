@@ -6,6 +6,7 @@ import random
 pygame.init()
 
 titleFont = pygame.font.Font(None, 60)
+scoreFont = pygame.font.Font(None, 40)
 
 #game definitions
 clock = pygame.time.Clock()
@@ -85,6 +86,7 @@ class Game:
         self.snakie = Snakie()
         self.fruit = Fruit(self.snakie.body)
         self.state = "RUNNING"
+        self.score = 0
 
     def draw(self):
         self.fruit.draw()
@@ -103,6 +105,7 @@ class Game:
             #print("yummy in my tummy")
             self.fruit.position = self.fruit.generRandomPos(self.snakie.body)
             self.snakie.add_body = True
+            self.score += 1
 
     def check_deadEND(self):
         if self.snakie.body[0].x == NumberTiles or self.snakie.body[0].x == -1:
@@ -121,6 +124,7 @@ class Game:
         self.snakie.reset()
         self.fruit.position = self.fruit.generRandomPos(self.snakie.body)
         self.state = "STOPPED"
+        self.score = 0
 
 
 
@@ -183,7 +187,10 @@ while running:
 
     game.draw()
     title_surface = titleFont.render("Snakie game", True, (148, 201, 40))
+    score_surface = scoreFont.render(str(game.score), True, (148, 201, 40))
+
     screen.blit(title_surface, (OFFSET + 5, 20))
+    screen.blit(score_surface, (OFFSET + 5, OFFSET + SCREEN_HEIGHT + 10))
 
 
 

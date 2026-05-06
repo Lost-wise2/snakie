@@ -108,6 +108,7 @@ class Game:
         self.fruit = Fruit(self.snakie.body)
         self.state = "RUNNING"
         self.score = 0
+        self.paused =  False
 
     def draw(self):
         self.fruit.draw()
@@ -119,6 +120,7 @@ class Game:
             self.check_collision()
             self.check_deadEND()
             self.check_eatSELF()
+            self.draw_end()
 
 
     def check_collision(self):
@@ -145,8 +147,16 @@ class Game:
         self.snakie.reset()
         self.fruit.position = self.fruit.generRandomPos(self.snakie.body)
         self.state = "STOPPED"
-
+        
         self.score = 0
+
+
+    def draw_end(self):
+        if self.paused == True:
+            self.state = "STOPPED"
+            #pygame.draw.rect(screen, (255,255,255, 250), [0,0, SCREEN_WIDTH, SCREEN_HEIGHT])
+            #screen.fill((255,0,0,150))
+            #screen.blit(screen, (0,0))
 
 
 
@@ -196,6 +206,15 @@ while running:
             if event.key == pygame.K_RIGHT and game.snakie.direction != Vector2(-1,0):
                 game.snakie.direction = Vector2(1,0)
 
+            if event.key == pygame.K_ESCAPE:
+                if game.paused == False:
+                    game.paused = True
+                    #screen.fill((255,0,0,150))
+                else:
+                    game.paused = False
+
+            
+
 
     #snakie.update()
 
@@ -215,6 +234,12 @@ while running:
     screen.blit(score_surface, (OFFSET + 5, OFFSET + SCREEN_HEIGHT + 10))
 
 
+    if game.paused == True:
+        s = pygame.Surface((1000,750))  # the size of your rect
+        s.set_alpha(150)                # alpha level
+        s.fill((255,255,255))           # this fills the entire surface
+        screen.blit(s, (0,0))
+    
 
 
     pygame.display.flip()

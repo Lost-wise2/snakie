@@ -6,22 +6,22 @@ import random
 import json
 
 
-def renewSCores():
+#def renewSCores():
 
-    highScores = []
+    #highScores = []
 
-    with open("highScores.json", "r", encoding="utf-8") as HIGHscores:
-        the_HIGHscores = json.load(HIGHscores)
+with open("highScores.json", "r", encoding="utf-8") as HIGHscores:
+    the_HIGHscores = json.load(HIGHscores)
 
-        print(the_HIGHscores)
-        print(the_HIGHscores["mik_1"])
+    print(the_HIGHscores)
+    print(the_HIGHscores["highestScore"])
         
-        highScores.append(the_HIGHscores)
+        #highScores.append(the_HIGHscores)
 
-        print(highScores)
+        #print(highScores)
 
 
-renewSCores()
+#renewSCores()
 
 
 pygame.init()
@@ -73,6 +73,48 @@ class Fruit:
 
 
 
+
+
+class Star:
+    def __init__(self, snakie_body):
+        self.starChance = 0
+        self.position = self.generRandomPos(snakie_body)
+        
+    
+    def draw(self):
+        starRect = pygame.Rect(OFFSET + self.position.x * TileSize, OFFSET + self.position.y * TileSize, TileSize, TileSize)
+        #pygame.draw.rect(screen, BLACK, fruitRect)
+        screen.blit(starSurface, starRect)
+
+    def increaseChance(self):
+        self.starChance = random.randint(0,100)
+        print(self.starChance)
+
+    def noStar(self):
+        self.starChance = 0
+
+    def generRandomCell(self):
+        
+        if self.starChance >= 60:
+            x = random.randint(0, NumberTiles-1)
+            y = random.randint(0, TileSize-1)
+            return Vector2(x,y)
+        else:
+            return Vector2(-200, -200)
+    
+    def generRandomPos(self, snakie_body):
+        
+        position = self.generRandomCell()
+
+        while position in snakie_body:
+            position = self.generRandomCell()
+            
+
+        return position
+
+
+
+
 class Snakie:
     def __init__(self):
         self.body = [Vector2(6,9), Vector2(5,9), Vector2(4,9)]
@@ -106,6 +148,8 @@ class Game:
     def __init__(self):
         self.snakie = Snakie()
         self.fruit = Fruit(self.snakie.body)
+        self.star = Star(self.snakie.body)
+        
         self.state = "RUNNING"
         self.score = 0
         self.paused =  False
@@ -113,11 +157,14 @@ class Game:
     def draw(self):
         self.fruit.draw()
         self.snakie.draw()
+        
+        self.star.draw()
 
     def update(self):
         if self.state == "RUNNING":
             self.snakie.update()
             self.check_collision()
+            self.ate_star()
             self.check_deadEND()
             self.check_eatSELF()
             self.draw_end()
@@ -129,6 +176,16 @@ class Game:
             self.fruit.position = self.fruit.generRandomPos(self.snakie.body)
             self.snakie.add_body = True
             self.score += 1
+            self.star.increaseChance()
+            self.star.position = self.star.generRandomPos(self.snakie.body)
+
+    def ate_star(self):
+        if self.snakie.body[0] == self.star.position:
+            #print("yummy in my tummy")
+            
+            self.score += 1
+            self.star.noStar()
+            self.star.position = self.star.generRandomPos(self.snakie.body)
 
     def check_deadEND(self):
         if self.snakie.body[0].x == NumberTiles or self.snakie.body[0].x == -1:
@@ -172,6 +229,7 @@ pygame.display.set_caption("Snakie")
 game = Game()
 
 fruitSurface = pygame.image.load("test_fuit.jpg")
+starSurface = pygame.image.load("star.jpg")
 
 
 
@@ -229,8 +287,10 @@ while running:
     game.draw()
     title_surface = titleFont.render("Snakie game", True, (148, 201, 40))
     score_surface = scoreFont.render(str(game.score), True, (148, 201, 40))
+    highscore_surface = scoreFont.render("Current Highscore: " + str(the_HIGHscores["highestScore"]), True, (148, 201, 40))
 
     screen.blit(title_surface, (OFFSET + 5, 20))
+    screen.blit(highscore_surface, (OFFSET + 400, 30))
     screen.blit(score_surface, (OFFSET + 5, OFFSET + SCREEN_HEIGHT + 10))
 
 

@@ -43,6 +43,8 @@ SCREEN_HEIGHT = TileSize*TileSize
 
 OFFSET = 75
 
+SPEED = 150
+
 
 
 class Fruit:
@@ -178,6 +180,10 @@ class Game:
             self.score += 1
             self.star.increaseChance()
             self.star.position = self.star.generRandomPos(self.snakie.body)
+            global SPEED
+            SPEED -= 50
+            print(SPEED)
+            pygame.time.set_timer(SNAKE_UPDATE, SPEED)
 
     def ate_star(self):
         if self.snakie.body[0] == self.star.position:
@@ -204,7 +210,9 @@ class Game:
         self.snakie.reset()
         self.fruit.position = self.fruit.generRandomPos(self.snakie.body)
         self.state = "STOPPED"
-        
+
+        global SPEED
+        SPEED = 150
         self.score = 0
 
 
@@ -234,7 +242,7 @@ starSurface = pygame.image.load("star.jpg")
 
 
 SNAKE_UPDATE = pygame.USEREVENT
-pygame.time.set_timer(SNAKE_UPDATE, 150)
+pygame.time.set_timer(SNAKE_UPDATE, SPEED)
 
 
 #The game loop
@@ -299,6 +307,16 @@ while running:
         s.set_alpha(150)                # alpha level
         s.fill((255,255,255))           # this fills the entire surface
         screen.blit(s, (0,0))
+
+        gameOver_surface = titleFont.render("Game over", True, (148, 201, 40))
+        currentScore_surface = scoreFont.render("Current score: " + str(game.score), True, (148, 201, 40))
+        currentHighscore_surface = scoreFont.render("Current Highscore: " + str(the_HIGHscores["highestScore"]), True, (148, 201, 40))
+
+        screen.blit(gameOver_surface, (OFFSET + 400, 200))
+        screen.blit(currentScore_surface, (OFFSET + 400, 300))
+        screen.blit(currentHighscore_surface, (OFFSET + 400, 400))
+        
+        
     
 
 

@@ -211,7 +211,7 @@ class Game:
     
     def check_eatSELF(self):
         headless_snake = self.snakie.body[1:]
-        if self.snakie.body[0] in headless_snake:
+        if self.snakie.body[0] in headless_snake and self.powerUP == False:
             self.game_over()
 
     
@@ -267,12 +267,12 @@ while running:
             sys.exit()
 
 
-        
-        if pygame.time.get_ticks() - game.powerUP_time > 3000:
-            game.powerUP = False
-            SPEED = 150
-            print(SPEED)
-            pygame.time.set_timer(SNAKE_UPDATE, SPEED)
+        if game.powerUP == True:
+            if pygame.time.get_ticks() - game.powerUP_time > 3000:
+                game.powerUP = False
+                SPEED = 150
+                #print(SPEED)
+                pygame.time.set_timer(SNAKE_UPDATE, SPEED)
 
 
         if event.type == pygame.KEYDOWN:

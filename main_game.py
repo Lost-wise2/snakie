@@ -156,6 +156,9 @@ class Game:
         self.score = 0
         self.paused =  False
 
+        self.powerUP = False
+        self.powerUP_time = 0
+
     def draw(self):
         self.fruit.draw()
         self.snakie.draw()
@@ -180,10 +183,7 @@ class Game:
             self.score += 1
             self.star.increaseChance()
             self.star.position = self.star.generRandomPos(self.snakie.body)
-            global SPEED
-            SPEED -= 50
-            print(SPEED)
-            pygame.time.set_timer(SNAKE_UPDATE, SPEED)
+            
 
     def ate_star(self):
         if self.snakie.body[0] == self.star.position:
@@ -192,6 +192,16 @@ class Game:
             self.score += 1
             self.star.noStar()
             self.star.position = self.star.generRandomPos(self.snakie.body)
+
+            global SPEED
+            SPEED -= 50
+            print(SPEED)
+            pygame.time.set_timer(SNAKE_UPDATE, SPEED)
+
+            self.powerUP = True
+            
+            self.powerUP_time = pygame.time.get_ticks()
+
 
     def check_deadEND(self):
         if self.snakie.body[0].x == NumberTiles or self.snakie.body[0].x == -1:
@@ -214,6 +224,7 @@ class Game:
         global SPEED
         SPEED = 150
         self.score = 0
+        pygame.time.set_timer(SNAKE_UPDATE, SPEED)
 
 
     def draw_end(self):
@@ -255,6 +266,13 @@ while running:
             pygame.quit()
             sys.exit()
 
+
+        
+        if pygame.time.get_ticks() - game.powerUP_time > 3000:
+            game.powerUP = False
+            SPEED = 150
+            print(SPEED)
+            pygame.time.set_timer(SNAKE_UPDATE, SPEED)
 
 
         if event.type == pygame.KEYDOWN:

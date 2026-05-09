@@ -81,6 +81,7 @@ class Star:
     def __init__(self, snakie_body):
         self.starChance = 0
         self.position = self.generRandomPos(snakie_body)
+        self.appeared = False
         
     
     def draw(self):
@@ -100,9 +101,15 @@ class Star:
         if self.starChance >= 60:
             x = random.randint(0, NumberTiles-1)
             y = random.randint(0, TileSize-1)
+            
+            self.appeared = True
+            self.powerUP_timer = pygame.time.get_ticks()
+
             return Vector2(x,y)
         else:
+            self.appeared = False
             return Vector2(-200, -200)
+            
     
     def generRandomPos(self, snakie_body):
         
@@ -195,7 +202,7 @@ class Game:
 
             global SPEED
             SPEED -= 50
-            print(SPEED)
+            #print(SPEED)
             pygame.time.set_timer(SNAKE_UPDATE, SPEED)
 
             self.powerUP = True
@@ -273,6 +280,13 @@ while running:
                 SPEED = 150
                 #print(SPEED)
                 pygame.time.set_timer(SNAKE_UPDATE, SPEED)
+
+
+        if game.star.appeared == True:
+            if pygame.time.get_ticks() - game.star.powerUP_timer > 3000:
+                game.star.appeared = False
+                game.star.noStar()
+                game.star.position = game.star.generRandomPos(game.snakie.body)
 
 
         if event.type == pygame.KEYDOWN:

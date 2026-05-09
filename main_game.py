@@ -131,9 +131,14 @@ class Snakie:
         self.add_body = False
 
     def draw(self):
+        if game.powerUP == False:
+            color = 255
+        else:
+            color = 140
         for segment in self.body:
             segmentRect = (OFFSET + segment.x * TileSize, OFFSET + segment.y *TileSize, TileSize, TileSize)
-            pygame.draw.rect(screen, BLACK, segmentRect, 0,7)
+            #print(segment[0])
+            pygame.draw.rect(screen, (color, (0+8*segment[1]), (0+8*segment[0])), segmentRect, 0,7)
 
 
     def update(self):

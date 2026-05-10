@@ -26,15 +26,16 @@ with open("highScores.json", "r", encoding="utf-8") as HIGHscores:
 
 pygame.init()
 
-titleFont = pygame.font.Font(None, 60)
+titleFont = pygame.font.Font(None, 30)
 scoreFont = pygame.font.Font(None, 40)
 
 #game definitions
 clock = pygame.time.Clock()
 
 BLACK = (0,0,0)
+WHITE = (255,255,255)
 
-TileSize = 25
+TileSize = 20
 NumberTiles = 30
 
 SCREEN_WIDTH = TileSize*NumberTiles
@@ -42,6 +43,14 @@ SCREEN_HEIGHT = TileSize*TileSize
 
 
 OFFSET = 75
+
+OFFSETLEFT = 117
+OFFSETRIGHT = 35
+OFFSETWIDTH = OFFSETLEFT + OFFSETRIGHT
+
+OFFSETTOP = 72
+OFFSETBOTTOM = 143
+OFFSETHEIGHT = OFFSETTOP + OFFSETBOTTOM
 
 SPEED = 150
 
@@ -53,7 +62,7 @@ class Fruit:
 
 
     def draw(self):
-        fruitRect = pygame.Rect(OFFSET + self.position.x * TileSize, OFFSET + self.position.y * TileSize, TileSize, TileSize)
+        fruitRect = pygame.Rect(OFFSETLEFT + self.position.x * TileSize, OFFSETTOP + self.position.y * TileSize, TileSize, TileSize)
         #pygame.draw.rect(screen, BLACK, fruitRect)
         screen.blit(fruitSurface, fruitRect)
 
@@ -85,7 +94,7 @@ class Star:
         
     
     def draw(self):
-        starRect = pygame.Rect(OFFSET + self.position.x * TileSize, OFFSET + self.position.y * TileSize, TileSize, TileSize)
+        starRect = pygame.Rect(OFFSETLEFT + self.position.x * TileSize, OFFSETTOP + self.position.y * TileSize, TileSize, TileSize)
         #pygame.draw.rect(screen, BLACK, fruitRect)
         screen.blit(starSurface, starRect)
 
@@ -136,7 +145,7 @@ class Snakie:
         else:
             color = 140
         for segment in self.body:
-            segmentRect = (OFFSET + segment.x * TileSize, OFFSET + segment.y *TileSize, TileSize, TileSize)
+            segmentRect = (OFFSETLEFT + segment.x * TileSize, OFFSETTOP + segment.y *TileSize, TileSize, TileSize)
             #print(segment[0])
             pygame.draw.rect(screen, (color, (0+8*segment[1]), (0+8*segment[0])), segmentRect, 0,7)
 
@@ -250,7 +259,9 @@ class Game:
 
 
 
-screen = pygame.display.set_mode((2*OFFSET + SCREEN_WIDTH, 2*OFFSET + SCREEN_HEIGHT))
+
+#screen size
+screen = pygame.display.set_mode((OFFSETWIDTH + SCREEN_WIDTH, OFFSETHEIGHT + SCREEN_HEIGHT))
 pygame.display.set_caption("Snakie")
 
 
@@ -261,6 +272,10 @@ game = Game()
 
 fruitSurface = pygame.image.load("test_fuit.jpg")
 starSurface = pygame.image.load("star.jpg")
+
+
+lowbackSurface = pygame.image.load("LOWLAYER.png")
+topbackSurface = pygame.image.load("smaller_over.png")
 
 
 
@@ -325,24 +340,29 @@ while running:
     #Frame rate and background
     clock.tick(60)
     screen.fill((255,255,255))
-    pygame.draw.rect(screen, (148, 201, 40), (OFFSET-5,OFFSET-5, SCREEN_WIDTH + 10, SCREEN_HEIGHT + 10), 5)
+    screen.blit(lowbackSurface, (OFFSETLEFT, OFFSETTOP)) #background low
+    screen.blit(topbackSurface, (0, 0)) #background top
+    
+    
+    pygame.draw.rect(screen, (0, 0, 0), (OFFSETLEFT-2,OFFSETTOP-2, SCREEN_WIDTH + 4, SCREEN_HEIGHT + 4), 2) #the border
+    
     #fruit.draw()
     #snakie.draw()
 
     game.draw()
-    title_surface = titleFont.render("Snakie game", True, (148, 201, 40))
-    score_surface = scoreFont.render(str(game.score), True, (148, 201, 40))
-    highscore_surface = scoreFont.render("Current Highscore: " + str(the_HIGHscores["highestScore"]), True, (148, 201, 40))
+    title_surface = titleFont.render("Snakie game - Paint", True, WHITE)
+    score_surface = scoreFont.render(str(game.score), True, WHITE)
+    highscore_surface = titleFont.render("Current Highscore: " + str(the_HIGHscores["highestScore"]), True, WHITE)
 
-    screen.blit(title_surface, (OFFSET + 5, 20))
-    screen.blit(highscore_surface, (OFFSET + 400, 30))
+    screen.blit(title_surface, (45, 10))
+    screen.blit(highscore_surface, (300, 10))
     screen.blit(score_surface, (OFFSET + 5, OFFSET + SCREEN_HEIGHT + 10))
 
 
     if game.paused == True:
-        s = pygame.Surface((1000,750))  # the size of your rect
-        s.set_alpha(150)                # alpha level
-        s.fill((255,255,255))           # this fills the entire surface
+        s = pygame.Surface((1000,750))
+        s.set_alpha(150)
+        s.fill((255,255,255))
         screen.blit(s, (0,0))
 
         gameOver_surface = titleFont.render("Game over", True, (148, 201, 40))

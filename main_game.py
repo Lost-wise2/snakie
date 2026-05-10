@@ -82,7 +82,7 @@ test_button = button(400,400,button_image)
 
 
 
-class Fruit:
+class Fruit():
     def __init__(self, snakie_body):
         self.position = self.generRandomPos(snakie_body)
 
@@ -112,7 +112,7 @@ class Fruit:
 
 
 
-class Star:
+class Star(Fruit):
     def __init__(self, snakie_body):
         self.starChance = 0
         self.position = self.generRandomPos(snakie_body)
@@ -147,14 +147,56 @@ class Star:
             
     
     def generRandomPos(self, snakie_body):
+        super().generRandomPos(snakie_body)
         
         position = self.generRandomCell()
 
-        while position in snakie_body:
-            position = self.generRandomCell()
+        #while position in snakie_body:
+        #    position = self.generRandomCell()
             
 
         return position
+
+
+class Bomb(Star):
+    def __init__(self, snakie_body):
+        self.starChance = 0
+        self.position = self.generRandomPos(snakie_body)
+        self.appeared = False
+
+
+
+    def draw(self):
+        bombRect = pygame.Rect(OFFSETLEFT + self.position.x * TileSize, OFFSETTOP + self.position.y * TileSize, TileSize, TileSize)
+        #pygame.draw.rect(screen, BLACK, fruitRect)
+        screen.blit(bombSurface, bombRect)
+
+    def increaseChance(self):
+        self.starChance = random.randint(0,100)
+        print("bomb:", self.starChance)
+
+    def noStar(self):
+        self.starChance = 0
+
+    def generRandomCell(self):
+        if self.starChance >= 20:
+            x = random.randint(0, NumberTiles-1)
+            y = random.randint(0, TileSize-1)
+            
+            self.appeared = True
+            self.powerDOWN_timer = pygame.time.get_ticks()
+
+            return Vector2(x,y)
+        else:
+            self.appeared = False
+            return Vector2(-200, -200)
+
+    def generRandomPos(self, snakie_body):
+        super().generRandomPos(snakie_body)
+        position = self.generRandomCell()
+        return position
+
+    
 
 
 
@@ -166,10 +208,13 @@ class Snakie:
         self.add_body = False
 
     def draw(self):
-        if game.powerUP == False:
+        if game.powerUP == True:
             color = 255
+        elif game.powerDOWN == True:
+            color = 70
         else:
-            color = 140
+            color = 170
+
         for segment in self.body:
             segmentRect = (OFFSETLEFT + segment.x * TileSize, OFFSETTOP + segment.y *TileSize, TileSize, TileSize)
             #print(segment[0])
@@ -198,6 +243,7 @@ class Game:
         self.snakie = Snakie()
         self.fruit = Fruit(self.snakie.body)
         self.star = Star(self.snakie.body)
+        self.bomb = Bomb(self.snakie.body)
         
         self.state = "RUNNING"
         self.score = 0
@@ -209,19 +255,23 @@ class Game:
 
 
         self.powerUP = False
+        self.powerDOWN = False
         self.powerUP_time = 0
+        self.powerDOWN_time = 0
 
     def draw(self):
         self.fruit.draw()
         self.snakie.draw()
         
         self.star.draw()
+        self.bomb.draw()
 
     def update(self):
         if self.state == "RUNNING":
             self.snakie.update()
             self.check_collision()
             self.ate_star()
+            self.ate_bomb()
             self.check_deadEND()
             self.check_eatSELF()
             self.draw_end()
@@ -234,7 +284,9 @@ class Game:
             self.snakie.add_body = True
             self.score += 1
             self.star.increaseChance()
+            self.bomb.increaseChance()
             self.star.position = self.star.generRandomPos(self.snakie.body)
+            self.bomb.position = self.bomb.generRandomPos(self.snakie.body)
             
 
     def ate_star(self):
@@ -251,8 +303,33 @@ class Game:
             pygame.time.set_timer(SNAKE_UPDATE, SPEED)
 
             self.powerUP = True
+            if self.powerDOWN == True:
+                self.powerDOWN = False
             
             self.powerUP_time = pygame.time.get_ticks()
+
+
+    def ate_bomb(self):
+        if self.snakie.body[0] == self.bomb.position:
+            #print("yummy in my tummy")
+            
+            if self.powerUP == False:
+                self.score -= 1
+            
+            
+                global SPEED
+                SPEED += 50
+                #print(SPEED)
+                pygame.time.set_timer(SNAKE_UPDATE, SPEED)
+
+                self.powerDOWN = True
+            
+                self.powerDOWN_time = pygame.time.get_ticks()
+            self.bomb.noStar()
+            self.bomb.position = self.bomb.generRandomPos(self.snakie.body)
+
+        
+
 
 
     def check_deadEND(self):
@@ -320,6 +397,7 @@ game.started = True
 
 fruitSurface = pygame.image.load("test_fuit.jpg")
 starSurface = pygame.image.load("star.jpg")
+bombSurface = pygame.image.load("bomb.jpg")
 
 
 lowbackSurface = pygame.image.load("LOWLAYER.png")
@@ -343,18 +421,36 @@ while running:
 
 
         if game.powerUP == True:
-            if pygame.time.get_ticks() - game.powerUP_time > 3000:
+            if pygame.time.get_ticks() - game.powerUP_time > 4000:
                 game.powerUP = False
                 SPEED = 150
                 #print(SPEED)
                 pygame.time.set_timer(SNAKE_UPDATE, SPEED)
 
-
         if game.star.appeared == True:
-            if pygame.time.get_ticks() - game.star.powerUP_timer > 3000:
+            if pygame.time.get_ticks() - game.star.powerUP_timer > 6000:
                 game.star.appeared = False
                 game.star.noStar()
                 game.star.position = game.star.generRandomPos(game.snakie.body)
+
+
+
+
+
+        if game.powerDOWN == True:
+            if pygame.time.get_ticks() - game.powerDOWN_time > 4000:
+                game.powerDOWN = False
+                SPEED = 150
+                #print(SPEED)
+                pygame.time.set_timer(SNAKE_UPDATE, SPEED)
+
+        if game.bomb.appeared == True:
+            if pygame.time.get_ticks() - game.bomb.powerDOWN_timer > 6000:
+                game.bomb.appeared = False
+                game.bomb.noStar()
+                game.bomb.position = game.bomb.generRandomPos(game.snakie.body)
+
+
 
 
         if event.type == pygame.KEYDOWN:

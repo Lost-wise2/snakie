@@ -70,6 +70,8 @@ class button:
         if self.rect.collidepoint(pos):
             if pygame.mouse.get_pressed()[0] == 1:
                 game.paused = False
+                game.started = False
+                game.ended = False
                 print("clicked")
 
         screen.blit(self.image, (self.rect.x, self.rect.y))
@@ -199,7 +201,12 @@ class Game:
         
         self.state = "RUNNING"
         self.score = 0
+        self.latestScore = 0
+
         self.paused =  False
+        self.started = False
+        self.ended = False
+
 
         self.powerUP = False
         self.powerUP_time = 0
@@ -262,14 +269,30 @@ class Game:
     
     def game_over(self):
         print("oopsies")
+        self.ended = True
         self.snakie.reset()
         self.fruit.position = self.fruit.generRandomPos(self.snakie.body)
         self.state = "STOPPED"
 
+
+        if self.score > the_HIGHscores["highestScore"]:
+            the_HIGHscores["highestScore"] = self.score
+            with open("highScores.json", "w", encoding="utf-8") as file:
+                the_HIGHscores["highestScore"] = self.score
+                print(the_HIGHscores["highestScore"])
+                data = the_HIGHscores
+                json.dump(data, file, ensure_ascii=False)
+
+
+
         global SPEED
         SPEED = 150
+        self.latestScore = self.score
         self.score = 0
         pygame.time.set_timer(SNAKE_UPDATE, SPEED)
+
+
+        
 
 
     def draw_end(self):
@@ -293,6 +316,7 @@ pygame.display.set_caption("Snakie")
 #snakie = Snakie()
 
 game = Game()
+game.started = True
 
 fruitSurface = pygame.image.load("test_fuit.jpg")
 starSurface = pygame.image.load("star.jpg")
@@ -383,7 +407,46 @@ while running:
     screen.blit(score_surface, (SCREEN_WIDTH - 25, SCREEN_HEIGHT + OFFSETTOP + 48))
 
 
-    if game.paused == True:
+    if game.paused == True and game.started == False:
+        s = pygame.Surface((1000,750))
+        s.set_alpha(150)
+        s.fill((255,255,255))
+        screen.blit(s, (0,0))
+
+
+        gamePaused_surface = titleFont.render("Game paused", True, (148, 201, 40))
+        
+
+        screen.blit(gamePaused_surface, (OFFSET + 400, 200))
+        
+
+        test_button.draw()
+
+
+
+
+    if game.started == True:
+        game.paused = True
+        
+        s = pygame.Surface((1000,750))
+        s.set_alpha(150)
+        s.fill((255,255,255))
+        screen.blit(s, (0,0))
+
+
+        gameName_surface = titleFont.render("Snakeie!", True, (148, 201, 40))
+        gameStart_surface = titleFont.render("Clcik to start!", True, (148, 201, 40))
+        
+
+        screen.blit(gameName_surface, (OFFSET + 400, 200))
+        screen.blit(gameStart_surface, (OFFSET + 400, 500))
+        
+
+        test_button.draw()
+
+
+
+    if game.ended == True:
         s = pygame.Surface((1000,750))
         s.set_alpha(150)
         s.fill((255,255,255))
@@ -391,7 +454,7 @@ while running:
 
 
         gameOver_surface = titleFont.render("Game over", True, (148, 201, 40))
-        currentScore_surface = scoreFont.render("Current score: " + str(game.score), True, (148, 201, 40))
+        currentScore_surface = scoreFont.render("Current score: " + str(game.latestScore), True, (148, 201, 40))
         currentHighscore_surface = scoreFont.render("Current Highscore: " + str(the_HIGHscores["highestScore"]), True, (148, 201, 40))
 
         screen.blit(gameOver_surface, (OFFSET + 400, 200))

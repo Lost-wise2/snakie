@@ -56,6 +56,30 @@ SPEED = 150
 
 
 
+
+button_image = pygame.image.load('button.jpg')
+class button:
+    def __init__(self, x, y, image):
+        self.image = image
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (x,y)
+
+    def draw(self):
+
+        pos = pygame.mouse.get_pos()
+        if self.rect.collidepoint(pos):
+            if pygame.mouse.get_pressed()[0] == 1:
+                game.paused = False
+                print("clicked")
+
+        screen.blit(self.image, (self.rect.x, self.rect.y))
+
+
+test_button = button(400,400,button_image)
+
+
+
+
 class Fruit:
     def __init__(self, snakie_body):
         self.position = self.generRandomPos(snakie_body)
@@ -356,7 +380,7 @@ while running:
 
     screen.blit(title_surface, (45, 10))
     screen.blit(highscore_surface, (300, 10))
-    screen.blit(score_surface, (OFFSET + 5, OFFSET + SCREEN_HEIGHT + 10))
+    screen.blit(score_surface, (SCREEN_WIDTH - 25, SCREEN_HEIGHT + OFFSETTOP + 48))
 
 
     if game.paused == True:
@@ -365,6 +389,7 @@ while running:
         s.fill((255,255,255))
         screen.blit(s, (0,0))
 
+
         gameOver_surface = titleFont.render("Game over", True, (148, 201, 40))
         currentScore_surface = scoreFont.render("Current score: " + str(game.score), True, (148, 201, 40))
         currentHighscore_surface = scoreFont.render("Current Highscore: " + str(the_HIGHscores["highestScore"]), True, (148, 201, 40))
@@ -372,6 +397,8 @@ while running:
         screen.blit(gameOver_surface, (OFFSET + 400, 200))
         screen.blit(currentScore_surface, (OFFSET + 400, 300))
         screen.blit(currentHighscore_surface, (OFFSET + 400, 400))
+
+        test_button.draw()
         
         
     

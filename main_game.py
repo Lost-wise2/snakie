@@ -34,6 +34,7 @@ clock = pygame.time.Clock()
 
 BLACK = (0,0,0)
 WHITE = (255,255,255)
+TEXT = (161, 105, 191)
 
 TileSize = 20
 NumberTiles = 30
@@ -57,7 +58,7 @@ SPEED = 140
 
 
 
-button_image = pygame.image.load('button.jpg')
+button_image = pygame.image.load('buttone.jpg')
 class button:
     def __init__(self, x, y, image):
         self.image = image
@@ -375,9 +376,9 @@ class Game:
     def draw_end(self):
         if self.paused == True or self.ended == True or self.started == True:
             self.state = "STOPPED"
-            global SPEED
-            SPEED = 2000
-            pygame.time.set_timer(SNAKE_UPDATE, SPEED)
+            #global SPEED
+            #SPEED = 2000
+            #pygame.time.set_timer(SNAKE_UPDATE, SPEED)
         else:
             SPEED = 140
             if self.powerUP == True:
@@ -408,7 +409,7 @@ game = Game()
 game.started = True
 
 fruitSurface = pygame.image.load("test_fuit.jpg")
-starSurface = pygame.image.load("star.jpg")
+starSurface = pygame.image.load("powerup.jpg")
 bombSurface = pygame.image.load("bomb.jpg")
 
 
@@ -561,13 +562,13 @@ while running:
         screen.blit(s, (0,0))
 
 
-        gameOver_surface = titleFont.render("Game over", True, (148, 201, 40))
-        currentScore_surface = scoreFont.render("Current score: " + str(game.latestScore), True, (148, 201, 40))
-        currentHighscore_surface = scoreFont.render("Current Highscore: " + str(the_HIGHscores["highestScore"]), True, (148, 201, 40))
+        gameOver_surface = titleFont.render("Game over", True, TEXT)
+        currentScore_surface = scoreFont.render("Current score: " + str(game.latestScore), True, TEXT)
+        currentHighscore_surface = scoreFont.render("Current Highscore: " + str(the_HIGHscores["highestScore"]), True, TEXT)
 
-        screen.blit(gameOver_surface, (OFFSET + 400, 200))
-        screen.blit(currentScore_surface, (OFFSET + 400, 300))
-        screen.blit(currentHighscore_surface, (OFFSET + 400, 400))
+        screen.blit(gameOver_surface, (OFFSET + 200, 200))
+        screen.blit(currentScore_surface, (OFFSET + 200, 300))
+        screen.blit(currentHighscore_surface, (OFFSET + 200, 400))
 
         test_button.draw()
         

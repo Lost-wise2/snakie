@@ -1,3 +1,5 @@
+#Imported a few libraries for this project
+
 import pygame
 from pygame.math import Vector2
 import sys
@@ -7,20 +9,22 @@ import json
 
 
 
-
+# Open the .json file to import the most recent saved highscore
 with open("highScores.json", "r", encoding="utf-8") as HIGHscores:
     the_HIGHscores = json.load(HIGHscores)
         
         
 
-
+# Initialize pygame
 pygame.init()
 
+# Fonts and fontsizes for the text displayed
 nameFont = pygame.font.Font(None, 60)
 titleFont = pygame.font.Font(None, 30)
 scoreFont = pygame.font.Font(None, 40)
 
-#game definitions
+
+#game definitions like colors and variables for tiles and distances
 clock = pygame.time.Clock()
 
 BLACK = (0,0,0)
@@ -48,7 +52,7 @@ SPEED = 140
 
 
 
-
+# Class for the buttons that will be displayed on the menues to continue
 button_image = pygame.image.load('buttone.jpg')
 class button:
     def __init__(self, x, y, image):
@@ -58,6 +62,7 @@ class button:
 
     def draw(self):
 
+        #Gets the position of the mouse to check if the mouse clicks the button
         pos = pygame.mouse.get_pos()
         if self.rect.collidepoint(pos):
             if pygame.mouse.get_pressed()[0] == 1:
@@ -72,7 +77,7 @@ test_button = button(280,400,button_image)
 
 
 
-
+# Parent class for the edible objects, the parent class used for the regular fruit
 class Fruit():
     def __init__(self, snakie_body):
         self.position = self.generRandomPos(snakie_body)
@@ -83,11 +88,13 @@ class Fruit():
         screen.blit(fruitSurface, fruitRect)
 
     
+        #Generate a random position on the playable map
     def generRandomCell(self):
         x = random.randint(0, NumberTiles-1)
         y = random.randint(0, TileSize-1)
         return Vector2(x,y)
     
+        # Makes sure the fruit won't spawn on the snake body itself
     def generRandomPos(self, snakie_body):
         
         position = self.generRandomCell()
@@ -101,7 +108,7 @@ class Fruit():
 
 
 
-
+# Child class for the power up called star
 class Star(Fruit):
     def __init__(self, snakie_body):
         self.starChance = 0
@@ -113,12 +120,16 @@ class Star(Fruit):
         starRect = pygame.Rect(OFFSETLEFT + self.position.x * TileSize, OFFSETTOP + self.position.y * TileSize, TileSize, TileSize)
         screen.blit(starSurface, starRect)
 
+        # Will have a chance randomized every time a fruit is eaten to make sure it doesn't spawn all the time
     def increaseChance(self):
         self.starChance = random.randint(0,100)
 
+        # Zeros the chances for the star, basically used when you have eaten the star already to ensure it doesn't spawn imediately after
     def noStar(self):
         self.starChance = 0
 
+
+        # To simplify it's position spawning with rarity in mind, it spawns outside of the playable area, then spawns within the playable area when the chances to spawn is high enough
     def generRandomCell(self):
         
         if self.starChance >= 60:
@@ -143,6 +154,8 @@ class Star(Fruit):
         return position
 
 
+
+# Child class for the power down, same spawning rules and functions as the powerup except it has a different spawn criteria
 class Bomb(Star):
     def __init__(self, snakie_body):
         self.starChance = 0
@@ -183,7 +196,7 @@ class Bomb(Star):
 
 
 
-
+# Class for the snake itself, main body consisting of a list of coordinates that changes position based on direction
 class Snakie:
     def __init__(self):
         self.body = [Vector2(6,9), Vector2(5,9), Vector2(4,9)]
@@ -191,6 +204,7 @@ class Snakie:
         self.queued_direction = Vector2(1,0)
         self.add_body = False
 
+        # The different sounds that play throughout the game such as when moving and when eating
         self.eat_fruit = pygame.mixer.Sound("eatsound.wav")
         self.eat_star = pygame.mixer.Sound("powerupsound.wav")
         self.eat_bomb = pygame.mixer.Sound("powerdownsound.wav")
@@ -200,6 +214,7 @@ class Snakie:
 
         self.hit_wall = pygame.mixer.Sound("hitwall.wav")
 
+        # Each segment is a coordinate that has its color based on the state of the snake as well as the position of the snake, each segment one tile.
     def draw(self):
         if game.powerUP == True:
             color = 255
@@ -213,6 +228,7 @@ class Snakie:
             pygame.draw.rect(screen, (color, (0+8*segment[1]), (0+8*segment[0])), segmentRect, 0,7)
 
 
+        # Method for updating the snake direction and adding a new segment when eating at the start of the snake
     def update(self):
         self.direction = self.queued_direction
         self.body.insert(0,self.body[0] + self.direction)
@@ -222,7 +238,7 @@ class Snakie:
         else:
             self.body = self.body[:-1]
 
-
+        # function for reseting the snake to its original lenght and position when restarting after losing
     def reset(self):
         self.body = [Vector2(6,9), Vector2(5,9), Vector2(4,9)]
         self.direction = Vector2(1,0)
@@ -230,14 +246,17 @@ class Snakie:
 
 
 
-
+# Class for the game itself
 class Game:
     def __init__(self):
+
+        # creating the objects within the game class
         self.snakie = Snakie()
         self.fruit = Fruit(self.snakie.body)
         self.star = Star(self.snakie.body)
         self.bomb = Bomb(self.snakie.body)
         
+        #Different definitions and variables for the game and the different functions
         self.state = "RUNNING"
         self.score = 0
         self.latestScore = 0
@@ -270,6 +289,7 @@ class Game:
             self.draw_end()
 
 
+        #Function for checking collision with fruit to eat, spawn new, gain score
     def check_collision(self):
         if self.snakie.body[0] == self.fruit.position:
             self.fruit.position = self.fruit.generRandomPos(self.snakie.body)

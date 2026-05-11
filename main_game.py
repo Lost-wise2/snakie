@@ -66,6 +66,7 @@ class button:
         pos = pygame.mouse.get_pos()
         if self.rect.collidepoint(pos):
             if pygame.mouse.get_pressed()[0] == 1:
+                game.playing = True
                 game.paused = False
                 game.started = False
                 game.ended = False
@@ -265,6 +266,8 @@ class Game:
         self.started = False
         self.ended = False
 
+        self.playing = True
+
 
         self.powerUP = False
         self.powerDOWN = False
@@ -331,6 +334,7 @@ class Game:
             
             if self.powerUP == False:
                 self.score -= 1
+                self.snakie.add_body = True
             
             
                 global SPEED
@@ -342,6 +346,7 @@ class Game:
                 self.powerDOWN = True
             
                 self.powerDOWN_time = pygame.time.get_ticks()
+            self.snakie.eat_fruit.play()
             self.bomb.noStar()
             self.bomb.position = self.bomb.generRandomPos(self.snakie.body)
 
@@ -361,6 +366,7 @@ class Game:
         headless_snake = self.snakie.body[1:]
         if self.snakie.body[0] in headless_snake and self.powerUP == False:
             self.game_over()
+            self.snakie.hit_wall.play()
 
     
     def game_over(self):
@@ -474,22 +480,22 @@ while running:
 
 
         if event.type == pygame.KEYDOWN:
-            if game.state == "STOPPED":
+            if game.state == "STOPPED" and game.playing == True: #game.paused == False and game.started == False and game.ended == False:
                 game.state = "RUNNING"
-            if event.key == pygame.K_UP and game.snakie.direction != Vector2(0,1) and game.paused == False and game.ended == False and game.started == False:
+            if event.key == pygame.K_UP and game.snakie.direction != Vector2(0,1) and game.playing == True:
                 game.snakie.queued_direction = Vector2(0,-1)
                 game.snakie.move_neg.play()
 
-            if event.key == pygame.K_DOWN and game.snakie.direction != Vector2(0,-1) and game.paused == False and game.ended == False and game.started == False:
+            if event.key == pygame.K_DOWN and game.snakie.direction != Vector2(0,-1) and game.playing == True:
                 game.snakie.queued_direction = Vector2(0,1)
                 game.snakie.move_neg.play()
                 
 
-            if event.key == pygame.K_LEFT and game.snakie.direction != Vector2(1,0) and game.paused == False and game.ended == False and game.started == False:
+            if event.key == pygame.K_LEFT and game.snakie.direction != Vector2(1,0) and game.playing == True:
                 game.snakie.queued_direction = Vector2(-1,0)
                 game.snakie.move_pos.play()
 
-            if event.key == pygame.K_RIGHT and game.snakie.direction != Vector2(-1,0) and game.paused == False and game.ended == False and game.started == False:
+            if event.key == pygame.K_RIGHT and game.snakie.direction != Vector2(-1,0) and game.playing == True:
                 game.snakie.queued_direction = Vector2(1,0)
                 game.snakie.move_pos.play()
 
@@ -499,6 +505,7 @@ while running:
                     #screen.fill((255,0,0,150))
                 else:
                     game.paused = False
+                    game.playing = True
 
             
 
@@ -529,6 +536,7 @@ while running:
 
 
     if game.paused == True and game.started == False:
+        game.playing = False
         s = pygame.Surface((1000,750))
         s.set_alpha(150)
         s.fill((255,255,255))
@@ -548,6 +556,7 @@ while running:
 
     if game.started == True:
         game.paused = True
+        game.playing = False
         
         s = pygame.Surface((1000,750))
         s.set_alpha(150)
@@ -568,6 +577,7 @@ while running:
 
 
     if game.ended == True:
+        game.playing = False
         s = pygame.Surface((1000,750))
         s.set_alpha(150)
         s.fill((255,255,255))

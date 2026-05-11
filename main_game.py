@@ -209,6 +209,15 @@ class Snakie:
         self.direction = Vector2(1,0)
         self.add_body = False
 
+        self.eat_fruit = pygame.mixer.Sound("eatsound.wav")
+        self.eat_star = pygame.mixer.Sound("powerupsound.wav")
+        self.eat_bomb = pygame.mixer.Sound("powerdownsound.wav")
+
+        self.move_pos = pygame.mixer.Sound("movepositive.wav")
+        self.move_neg = pygame.mixer.Sound("movenegative.wav")
+
+        self.hit_wall = pygame.mixer.Sound("hitwall.wav")
+
     def draw(self):
         if game.powerUP == True:
             color = 255
@@ -289,6 +298,8 @@ class Game:
             self.bomb.increaseChance()
             self.star.position = self.star.generRandomPos(self.snakie.body)
             self.bomb.position = self.bomb.generRandomPos(self.snakie.body)
+
+            self.snakie.eat_fruit.play()
             
 
     def ate_star(self):
@@ -303,6 +314,8 @@ class Game:
             SPEED -= 50
             #print(SPEED)
             pygame.time.set_timer(SNAKE_UPDATE, SPEED)
+
+            self.snakie.eat_star.play()
 
             self.powerUP = True
             if self.powerDOWN == True:
@@ -324,6 +337,8 @@ class Game:
                 #print(SPEED)
                 pygame.time.set_timer(SNAKE_UPDATE, SPEED)
 
+                self.snakie.eat_bomb.play()
+
                 self.powerDOWN = True
             
                 self.powerDOWN_time = pygame.time.get_ticks()
@@ -337,8 +352,10 @@ class Game:
     def check_deadEND(self):
         if self.snakie.body[0].x == NumberTiles or self.snakie.body[0].x == -1:
             self.game_over()
+            self.snakie.hit_wall.play()
         if self.snakie.body[0].y == TileSize or self.snakie.body[0].y == -1:
             self.game_over()
+            self.snakie.hit_wall.play()
     
     def check_eatSELF(self):
         headless_snake = self.snakie.body[1:]
@@ -472,15 +489,20 @@ while running:
                 game.state = "RUNNING"
             if event.key == pygame.K_UP and game.snakie.direction != Vector2(0,1) and game.paused == False and game.ended == False and game.started == False:
                 game.snakie.direction = Vector2(0,-1)
+                game.snakie.move_neg.play()
 
             if event.key == pygame.K_DOWN and game.snakie.direction != Vector2(0,-1) and game.paused == False and game.ended == False and game.started == False:
                 game.snakie.direction = Vector2(0,1)
+                game.snakie.move_neg.play()
+                
 
             if event.key == pygame.K_LEFT and game.snakie.direction != Vector2(1,0) and game.paused == False and game.ended == False and game.started == False:
                 game.snakie.direction = Vector2(-1,0)
+                game.snakie.move_pos.play()
 
             if event.key == pygame.K_RIGHT and game.snakie.direction != Vector2(-1,0) and game.paused == False and game.ended == False and game.started == False:
                 game.snakie.direction = Vector2(1,0)
+                game.snakie.move_pos.play()
 
             if event.key == pygame.K_ESCAPE:
                 if game.paused == False:

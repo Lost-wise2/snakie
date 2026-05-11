@@ -6,22 +6,12 @@ import random
 import json
 
 
-#def renewSCores():
 
-    #highScores = []
 
 with open("highScores.json", "r", encoding="utf-8") as HIGHscores:
     the_HIGHscores = json.load(HIGHscores)
-
-    print(the_HIGHscores)
-    print(the_HIGHscores["highestScore"])
         
-        #highScores.append(the_HIGHscores)
-
-        #print(highScores)
-
-
-#renewSCores()
+        
 
 
 pygame.init()
@@ -74,7 +64,6 @@ class button:
                 game.paused = False
                 game.started = False
                 game.ended = False
-                print("clicked")
 
         screen.blit(self.image, (self.rect.x, self.rect.y))
 
@@ -91,7 +80,6 @@ class Fruit():
 
     def draw(self):
         fruitRect = pygame.Rect(OFFSETLEFT + self.position.x * TileSize, OFFSETTOP + self.position.y * TileSize, TileSize, TileSize)
-        #pygame.draw.rect(screen, BLACK, fruitRect)
         screen.blit(fruitSurface, fruitRect)
 
     
@@ -123,12 +111,10 @@ class Star(Fruit):
     
     def draw(self):
         starRect = pygame.Rect(OFFSETLEFT + self.position.x * TileSize, OFFSETTOP + self.position.y * TileSize, TileSize, TileSize)
-        #pygame.draw.rect(screen, BLACK, fruitRect)
         screen.blit(starSurface, starRect)
 
     def increaseChance(self):
         self.starChance = random.randint(0,100)
-        print(self.starChance)
 
     def noStar(self):
         self.starChance = 0
@@ -152,9 +138,6 @@ class Star(Fruit):
         super().generRandomPos(snakie_body)
         
         position = self.generRandomCell()
-
-        #while position in snakie_body:
-        #    position = self.generRandomCell()
             
 
         return position
@@ -170,12 +153,10 @@ class Bomb(Star):
 
     def draw(self):
         bombRect = pygame.Rect(OFFSETLEFT + self.position.x * TileSize, OFFSETTOP + self.position.y * TileSize, TileSize, TileSize)
-        #pygame.draw.rect(screen, BLACK, fruitRect)
         screen.blit(bombSurface, bombRect)
 
     def increaseChance(self):
         self.starChance = random.randint(0,100)
-        print("bomb:", self.starChance)
 
     def noStar(self):
         self.starChance = 0
@@ -228,7 +209,6 @@ class Snakie:
 
         for segment in self.body:
             segmentRect = (OFFSETLEFT + segment.x * TileSize, OFFSETTOP + segment.y *TileSize, TileSize, TileSize)
-            #print(segment[0])
             pygame.draw.rect(screen, (color, (0+8*segment[1]), (0+8*segment[0])), segmentRect, 0,7)
 
 
@@ -290,7 +270,6 @@ class Game:
 
     def check_collision(self):
         if self.snakie.body[0] == self.fruit.position:
-            #print("yummy in my tummy")
             self.fruit.position = self.fruit.generRandomPos(self.snakie.body)
             self.snakie.add_body = True
             if self.powerUP == True:
@@ -307,7 +286,6 @@ class Game:
 
     def ate_star(self):
         if self.snakie.body[0] == self.star.position:
-            #print("yummy in my tummy")
             
             self.score += 1
             self.star.noStar()
@@ -315,7 +293,6 @@ class Game:
 
             global SPEED
             SPEED -= 50
-            #print(SPEED)
             pygame.time.set_timer(SNAKE_UPDATE, SPEED)
 
             self.snakie.eat_star.play()
@@ -329,7 +306,6 @@ class Game:
 
     def ate_bomb(self):
         if self.snakie.body[0] == self.bomb.position:
-            #print("yummy in my tummy")
             
             if self.powerUP == False:
                 self.score -= 1
@@ -337,7 +313,6 @@ class Game:
             
                 global SPEED
                 SPEED += 50
-                #print(SPEED)
                 pygame.time.set_timer(SNAKE_UPDATE, SPEED)
 
                 self.snakie.eat_bomb.play()
@@ -367,7 +342,6 @@ class Game:
 
     
     def game_over(self):
-        print("oopsies")
         self.ended = True
         self.snakie.reset()
         self.fruit.position = self.fruit.generRandomPos(self.snakie.body)
@@ -378,7 +352,6 @@ class Game:
             the_HIGHscores["highestScore"] = self.score
             with open("highScores.json", "w", encoding="utf-8") as file:
                 the_HIGHscores["highestScore"] = self.score
-                print(the_HIGHscores["highestScore"])
                 data = the_HIGHscores
                 json.dump(data, file, ensure_ascii=False)
 
@@ -397,9 +370,7 @@ class Game:
     def draw_end(self):
         if self.paused == True or self.ended == True or self.started == True:
             self.state = "STOPPED"
-            #global SPEED
-            #SPEED = 2000
-            #pygame.time.set_timer(SNAKE_UPDATE, SPEED)
+            
         else:
             SPEED = 140
             if self.powerUP == True:
@@ -409,9 +380,6 @@ class Game:
             
             pygame.time.set_timer(SNAKE_UPDATE, SPEED)
 
-            #pygame.draw.rect(screen, (255,255,255, 250), [0,0, SCREEN_WIDTH, SCREEN_HEIGHT])
-            #screen.fill((255,0,0,150))
-            #screen.blit(screen, (0,0))
 
 
 
@@ -423,8 +391,6 @@ screen = pygame.display.set_mode((OFFSETWIDTH + SCREEN_WIDTH, OFFSETHEIGHT + SCR
 pygame.display.set_caption("Snakie")
 
 
-#fruit = Fruit()
-#snakie = Snakie()
 
 game = Game()
 game.started = True
@@ -458,7 +424,6 @@ while running:
             if pygame.time.get_ticks() - game.powerUP_time > 4000:
                 game.powerUP = False
                 SPEED = 150
-                #print(SPEED)
                 pygame.time.set_timer(SNAKE_UPDATE, SPEED)
 
         if game.star.appeared == True:
@@ -475,7 +440,6 @@ while running:
             if pygame.time.get_ticks() - game.powerDOWN_time > 4000:
                 game.powerDOWN = False
                 SPEED = 150
-                #print(SPEED)
                 pygame.time.set_timer(SNAKE_UPDATE, SPEED)
 
         if game.bomb.appeared == True:

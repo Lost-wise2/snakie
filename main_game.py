@@ -26,6 +26,7 @@ with open("highScores.json", "r", encoding="utf-8") as HIGHscores:
 
 pygame.init()
 
+nameFont = pygame.font.Font(None, 60)
 titleFont = pygame.font.Font(None, 30)
 scoreFont = pygame.font.Font(None, 40)
 
@@ -78,7 +79,7 @@ class button:
         screen.blit(self.image, (self.rect.x, self.rect.y))
 
 
-test_button = button(400,400,button_image)
+test_button = button(280,400,button_image)
 
 
 
@@ -523,10 +524,10 @@ while running:
         screen.blit(s, (0,0))
 
 
-        gamePaused_surface = titleFont.render("Game paused", True, (148, 201, 40))
+        gamePaused_surface = nameFont.render("Game paused", True, TEXT)
         
 
-        screen.blit(gamePaused_surface, (OFFSET + 400, 200))
+        screen.blit(gamePaused_surface, (OFFSET + 160, 100))
         
 
         test_button.draw()
@@ -543,12 +544,12 @@ while running:
         screen.blit(s, (0,0))
 
 
-        gameName_surface = titleFont.render("Snakeie!", True, (148, 201, 40))
-        gameStart_surface = titleFont.render("Clcik to start!", True, (148, 201, 40))
+        gameName_surface = nameFont.render("Snakeie!", True, TEXT)
+        gameStart_surface = scoreFont.render("Clcik to start!", True, TEXT)
         
 
-        screen.blit(gameName_surface, (OFFSET + 400, 200))
-        screen.blit(gameStart_surface, (OFFSET + 400, 500))
+        screen.blit(gameName_surface, (OFFSET + 220, 100))
+        screen.blit(gameStart_surface, (OFFSET + 220, 355))
         
 
         test_button.draw()
@@ -562,13 +563,13 @@ while running:
         screen.blit(s, (0,0))
 
 
-        gameOver_surface = titleFont.render("Game over", True, TEXT)
+        gameOver_surface = nameFont.render("Game over", True, TEXT)
         currentScore_surface = scoreFont.render("Current score: " + str(game.latestScore), True, TEXT)
         currentHighscore_surface = scoreFont.render("Current Highscore: " + str(the_HIGHscores["highestScore"]), True, TEXT)
 
-        screen.blit(gameOver_surface, (OFFSET + 200, 200))
-        screen.blit(currentScore_surface, (OFFSET + 200, 300))
-        screen.blit(currentHighscore_surface, (OFFSET + 200, 400))
+        screen.blit(gameOver_surface, (OFFSET + 200, 130))
+        screen.blit(currentScore_surface, (OFFSET + 200, 200))
+        screen.blit(currentHighscore_surface, (OFFSET + 200, 270))
 
         test_button.draw()
         

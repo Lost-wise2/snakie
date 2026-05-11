@@ -293,7 +293,10 @@ class Game:
             #print("yummy in my tummy")
             self.fruit.position = self.fruit.generRandomPos(self.snakie.body)
             self.snakie.add_body = True
-            self.score += 1
+            if self.powerUP == True:
+                self.score += 2
+            else:
+                self.score += 1
             self.star.increaseChance()
             self.bomb.increaseChance()
             self.star.position = self.star.generRandomPos(self.snakie.body)

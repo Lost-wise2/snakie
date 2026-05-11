@@ -52,7 +52,7 @@ OFFSETTOP = 72
 OFFSETBOTTOM = 143
 OFFSETHEIGHT = OFFSETTOP + OFFSETBOTTOM
 
-SPEED = 150
+SPEED = 140
 
 
 
@@ -213,7 +213,7 @@ class Snakie:
         elif game.powerDOWN == True:
             color = 70
         else:
-            color = 170
+            color = 190
 
         for segment in self.body:
             segmentRect = (OFFSETLEFT + segment.x * TileSize, OFFSETTOP + segment.y *TileSize, TileSize, TileSize)
@@ -363,7 +363,7 @@ class Game:
 
 
         global SPEED
-        SPEED = 150
+        SPEED = 140
         self.latestScore = self.score
         self.score = 0
         pygame.time.set_timer(SNAKE_UPDATE, SPEED)
@@ -373,8 +373,20 @@ class Game:
 
 
     def draw_end(self):
-        if self.paused == True:
+        if self.paused == True or self.ended == True or self.started == True:
             self.state = "STOPPED"
+            global SPEED
+            SPEED = 2000
+            pygame.time.set_timer(SNAKE_UPDATE, SPEED)
+        else:
+            SPEED = 140
+            if self.powerUP == True:
+                SPEED -= 50
+            if self.powerDOWN == True:
+                SPEED += 50
+            
+            pygame.time.set_timer(SNAKE_UPDATE, SPEED)
+
             #pygame.draw.rect(screen, (255,255,255, 250), [0,0, SCREEN_WIDTH, SCREEN_HEIGHT])
             #screen.fill((255,0,0,150))
             #screen.blit(screen, (0,0))
@@ -456,16 +468,16 @@ while running:
         if event.type == pygame.KEYDOWN:
             if game.state == "STOPPED":
                 game.state = "RUNNING"
-            if event.key == pygame.K_UP and game.snakie.direction != Vector2(0,1):
+            if event.key == pygame.K_UP and game.snakie.direction != Vector2(0,1) and game.paused == False and game.ended == False and game.started == False:
                 game.snakie.direction = Vector2(0,-1)
 
-            if event.key == pygame.K_DOWN and game.snakie.direction != Vector2(0,-1):
+            if event.key == pygame.K_DOWN and game.snakie.direction != Vector2(0,-1) and game.paused == False and game.ended == False and game.started == False:
                 game.snakie.direction = Vector2(0,1)
 
-            if event.key == pygame.K_LEFT and game.snakie.direction != Vector2(1,0):
+            if event.key == pygame.K_LEFT and game.snakie.direction != Vector2(1,0) and game.paused == False and game.ended == False and game.started == False:
                 game.snakie.direction = Vector2(-1,0)
 
-            if event.key == pygame.K_RIGHT and game.snakie.direction != Vector2(-1,0):
+            if event.key == pygame.K_RIGHT and game.snakie.direction != Vector2(-1,0) and game.paused == False and game.ended == False and game.started == False:
                 game.snakie.direction = Vector2(1,0)
 
             if event.key == pygame.K_ESCAPE:

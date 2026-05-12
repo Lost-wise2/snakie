@@ -74,7 +74,7 @@ class button:
         screen.blit(self.image, (self.rect.x, self.rect.y))
 
 
-test_button = button(280,400,button_image)
+test_button = button(280,380,button_image)
 
 
 
@@ -574,7 +574,7 @@ while running:
         
 
         screen.blit(gameName_surface, (OFFSET + 220, 100))
-        screen.blit(gameStart_surface, (OFFSET + 220, 355))
+        screen.blit(gameStart_surface, (OFFSET + 220, 335))
         
 
         test_button.draw()

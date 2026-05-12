@@ -274,6 +274,7 @@ class Game:
         self.powerUP_time = 0
         self.powerDOWN_time = 0
 
+        # Calls the drawing functions for each object
     def draw(self):
         self.fruit.draw()
         self.snakie.draw()
@@ -281,6 +282,7 @@ class Game:
         self.star.draw()
         self.bomb.draw()
 
+        # Updates the different objects with the different functions for different collisions
     def update(self):
         if self.state == "RUNNING":
             self.snakie.update()
@@ -309,6 +311,7 @@ class Game:
             self.snakie.eat_fruit.play()
             
 
+        # Function for when eating the powerup, changes speed and variables for invulnerability
     def ate_star(self):
         if self.snakie.body[0] == self.star.position:
             
@@ -329,6 +332,7 @@ class Game:
             self.powerUP_time = pygame.time.get_ticks()
 
 
+        # Function for the opposite of the power up, makes you slower and removes your points unless you are powered up
     def ate_bomb(self):
         if self.snakie.body[0] == self.bomb.position:
             
@@ -353,7 +357,7 @@ class Game:
         
 
 
-
+        # Checking collisions with wall
     def check_deadEND(self):
         if self.snakie.body[0].x == NumberTiles or self.snakie.body[0].x == -1:
             self.game_over()
@@ -362,6 +366,7 @@ class Game:
             self.game_over()
             self.snakie.hit_wall.play()
     
+        # Checking collisions with the snake itself
     def check_eatSELF(self):
         headless_snake = self.snakie.body[1:]
         if self.snakie.body[0] in headless_snake and self.powerUP == False:
@@ -369,6 +374,7 @@ class Game:
             self.snakie.hit_wall.play()
 
     
+        # Function when you lose, counts your current points and if they are higher than the recent highscore, it updates the .json file then resets speed and score
     def game_over(self):
         self.ended = True
         self.snakie.reset()
@@ -394,7 +400,7 @@ class Game:
 
         
 
-
+    # variables for the game is not running, specifically for the pause menu
     def draw_end(self):
         if self.paused == True or self.ended == True or self.started == True:
             self.state = "STOPPED"
@@ -419,10 +425,11 @@ screen = pygame.display.set_mode((OFFSETWIDTH + SCREEN_WIDTH, OFFSETHEIGHT + SCR
 pygame.display.set_caption("Snakie")
 
 
-
+# creates the game object
 game = Game()
 game.started = True
 
+# different images for the objects
 fruitSurface = pygame.image.load("test_fuit.jpg")
 starSurface = pygame.image.load("powerup.jpg")
 bombSurface = pygame.image.load("bomb.jpg")
@@ -432,7 +439,7 @@ lowbackSurface = pygame.image.load("LOWLAYER.png")
 topbackSurface = pygame.image.load("smaller_over.png")
 
 
-
+# Updates the custom speed for the snake/the entire game (but the snake is the only moving thing)
 SNAKE_UPDATE = pygame.USEREVENT
 pygame.time.set_timer(SNAKE_UPDATE, SPEED)
 
@@ -440,6 +447,7 @@ pygame.time.set_timer(SNAKE_UPDATE, SPEED)
 #The game loop
 running = True
 while running:
+    # runs different events for closing the window and updating the game object
     for event in pygame.event.get():
         if event.type == SNAKE_UPDATE:
             game.update()
@@ -447,7 +455,7 @@ while running:
             pygame.quit()
             sys.exit()
 
-
+        # Checks for power ups and power down to make it limited to time. The power up and down are spawned for limited time and their effect is also time limited
         if game.powerUP == True:
             if pygame.time.get_ticks() - game.powerUP_time > 4000:
                 game.powerUP = False
@@ -459,8 +467,6 @@ while running:
                 game.star.appeared = False
                 game.star.noStar()
                 game.star.position = game.star.generRandomPos(game.snakie.body)
-
-
 
 
 
@@ -479,8 +485,10 @@ while running:
 
 
 
+
+            # changes the snake direction based on which key is pressed as long as the game is not paused or ended
         if event.type == pygame.KEYDOWN:
-            if game.state == "STOPPED" and game.playing == True: #game.paused == False and game.started == False and game.ended == False:
+            if game.state == "STOPPED" and game.playing == True:
                 game.state = "RUNNING"
             if event.key == pygame.K_UP and game.snakie.direction != Vector2(0,1) and game.playing == True:
                 game.snakie.queued_direction = Vector2(0,-1)
@@ -499,10 +507,10 @@ while running:
                 game.snakie.queued_direction = Vector2(1,0)
                 game.snakie.move_pos.play()
 
+                # Enables and disables the pause menue
             if event.key == pygame.K_ESCAPE:
                 if game.paused == False:
                     game.paused = True
-                    #screen.fill((255,0,0,150))
                 else:
                     game.paused = False
                     game.playing = True
@@ -510,7 +518,6 @@ while running:
             
 
 
-    #snakie.update()
 
 
     #Frame rate and background
@@ -522,8 +529,6 @@ while running:
     
     pygame.draw.rect(screen, (0, 0, 0), (OFFSETLEFT-2,OFFSETTOP-2, SCREEN_WIDTH + 4, SCREEN_HEIGHT + 4), 2) #the border
     
-    #fruit.draw()
-    #snakie.draw()
 
     game.draw()
     title_surface = titleFont.render("Snakie game - Paint", True, WHITE)

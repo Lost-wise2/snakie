@@ -22,6 +22,7 @@ pygame.init()
 nameFont = pygame.font.Font(None, 60)
 titleFont = pygame.font.Font(None, 30)
 scoreFont = pygame.font.Font(None, 40)
+infoFont = pygame.font.Font(None, 20)
 
 
 #game definitions like colors and variables for tiles and distances
@@ -434,6 +435,10 @@ fruitSurface = pygame.image.load("test_fuit.jpg")
 starSurface = pygame.image.load("powerup.jpg")
 bombSurface = pygame.image.load("bomb.jpg")
 
+TheFruit = pygame.image.load("TheFruit.jpg")
+TheStar = pygame.image.load("TheStar.jpg")
+TheBomb = pygame.image.load("TheBomb.jpg")
+
 
 lowbackSurface = pygame.image.load("LOWLAYER.png")
 topbackSurface = pygame.image.load("smaller_over.png")
@@ -571,10 +576,24 @@ while running:
 
         gameName_surface = nameFont.render("Snakeie!", True, TEXT)
         gameStart_surface = scoreFont.render("Clcik to start!", True, TEXT)
+
+        
+        THEFRUIT_surface = infoFont.render("This is fruit", True, TEXT)
+        THESTAR_surface = infoFont.render("This is powerup", True, TEXT)
+        THEBOMB_surface = infoFont.render("This is powerdown", True, TEXT)
         
 
         screen.blit(gameName_surface, (OFFSET + 220, 100))
         screen.blit(gameStart_surface, (OFFSET + 220, 335))
+
+
+        screen.blit(THEFRUIT_surface, (OFFSET + 110, 300))
+        screen.blit(THESTAR_surface, (OFFSET + 110 + 150, 300))
+        screen.blit(THEBOMB_surface, (OFFSET + 110 + 150*2, 300))
+
+        screen.blit(TheFruit, (OFFSET + 110, 180))
+        screen.blit(TheStar, (OFFSET + 110 + 150, 180))
+        screen.blit(TheBomb, (OFFSET + 110 + 150*2, 180))
         
 
         test_button.draw()
